@@ -17,5 +17,11 @@ router.get('/GetProblemList', questionController.getProblemList);
 router.get('/GetProblemById', questionController.getProblemById);
 // 获取来源列表
 router.get('/GetSources', questionController.getSources);
+// 获取统计数据
+router.get('/GetStatistics', middleware, questionController.getStatistics);
+// 获取排行榜
+router.get('/GetRankList', questionController.getRankList);
+// 获取题目详情
+router.get('/GetProblemDetail', questionController.getProblemDetail);
 
 module.exports = router;
