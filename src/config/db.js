@@ -7,20 +7,21 @@ let connectionPool;
 async function initializeDatabase() {
 	try {
 		connectionPool = await mysql.createPool(dbConfig);
-		console.log('连接池已创建');
 		// 测试数据库连接
 		const [rows, fields] = await connectionPool.query('SELECT 1+1 AS result');
-		console.log('测试查询结果:', rows);
-		console.log('数据库初始化完成并成功连接');
+		console.log(rows[0].result === 2 ? 'mysql连接成功' : 'mysql连接失败');
 	} catch (error) {
-		console.error('数据库初始化或连接失败:', error);
+		console.error('mysql连接失败，正在尝试重新连接');
+		// 连接失败时重新尝试连接
+		await initializeDatabase(); // 递归调用自身
 	}
 }
 
-function getDatabase() {
+async function getDatabase() {
 	console.log('获取数据库连接池');
 	if (!connectionPool) {
-		throw new Error('数据库初始化失败');
+		// 调用初始化数据库再获取连接
+		await initializeDatabase();
 	}
 	return connectionPool;
 }
