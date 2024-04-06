@@ -130,7 +130,13 @@ const deleteProblem = async (id) => {
 // 新增题目
 const addProblem = async (Form, SampleInputs, SampleOutputs, SampleRemarks, TestInputs, TestExpectedOutputs) => {
 	try {
+		// 先查看来源表中是否有该来源id，没有则插入
 		const connection = getDatabase();
+		const [rows1] = await connection.execute('SELECT * FROM sources WHERE id = ?', [Form.source]);
+		if (!rows1.length) {
+			const [rows2] = await connection.execute('INSERT INTO sources (name) VALUES (?)', [Form.source]);
+			Form.source = rows2.insertId;
+		}
 		// 插入problems表
 		const sql = `INSERT INTO problems (name, category_id, difficulty, source_id, author) VALUES (?, ?, ?, ?, ?)`;
 		const [rows] = await connection.execute(sql, [Form.name, Form.category, Form.difficulty, Form.source, Form.author]);

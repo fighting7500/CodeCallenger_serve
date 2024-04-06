@@ -87,9 +87,23 @@ const getProblemById = async (id) => {
 	}
 }
 
+// 获取来源列表
+const getSources = async () => {
+	try {
+		const sql = `SELECT * FROM sources`;
+		const connection = getDatabase();
+		const [rows] = await connection.execute(sql);
+		return rows;
+	} catch (error) {
+		console.error(error);
+		return error;
+	}
+}
+
 module.exports = {
 	getCategories,
 	getCategoriesCount,
 	getProblems,
-	getProblemById
+	getProblemById,
+	getSources
 }

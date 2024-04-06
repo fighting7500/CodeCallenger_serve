@@ -70,6 +70,10 @@ exports.getProblemById = async (req, res) => {
 exports.getSources = async (req, res) => {
 	try {
 		const sources = await questionModule.getSources();
+		if (!sources) {
+			console.log('获取来源列表失败');
+			return res.sendRes(null, 400, '获取来源列表失败');
+		}
 		console.log('获取来源列表成功');
 		return res.sendRes(sources, 200, 'success');
 	} catch (error) {
