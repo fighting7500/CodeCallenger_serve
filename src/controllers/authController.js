@@ -1,6 +1,6 @@
 const bcryptUtils = require('../utils/bcryptUtils');
 const userModel = require('../models/userModel');
-const Client = require('../utils/client.js').default;
+const Client = require('../utils/client').default;
 const redis = require('../config/redisConfig');
 const jwt = require('jsonwebtoken');
 const pointsModule = require("../models/pointsModules");

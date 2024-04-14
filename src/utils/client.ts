@@ -37,10 +37,12 @@ export default class Client {
             let resp = await client.verifyIntelligentCaptcha(request);
             // 建议使用您系统中的日志组件，打印返回
             // 获取验证码验证结果（请注意判空），将结果返回给前端。出现异常建议认为验证通过，优先保证业务可用，然后尽快排查异常原因。
+            // @ts-ignore
             let captchaVerifyResult = resp.body.result.verifyResult;
             console.error('验证结果', captchaVerifyResult)
             // 原因code
             // let captchaVerifyCode = resp.body.result.verifyCode;
+            // @ts-ignore
             return resp.body.result.verifyResult;
         } catch (error) {
             // 建议使用您系统中的日志组件，打印异常
@@ -57,7 +59,7 @@ export default class Client {
      * @return Client
      * @throws Exception
      */
-    static createClient(accessKeyId, accessKeySecret): Dysmsapi20170525 {
+    static createClient(accessKeyId: string | undefined, accessKeySecret: string | undefined): Dysmsapi20170525 {
         let config = new $OpenApi.Config({
             // 必填，您的 AccessKey ID
             accessKeyId: accessKeyId,

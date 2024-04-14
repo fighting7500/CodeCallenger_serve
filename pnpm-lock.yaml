@@ -80,7 +80,7 @@ devDependencies:
     specifier: ^10.9.2
     version: 10.9.2(@types/node@20.11.30)(typescript@5.4.3)
   typescript:
-    specifier: ^5.3.3
+    specifier: ^5.4.3
     version: 5.4.3
   webpack:
     specifier: ^5.90.3

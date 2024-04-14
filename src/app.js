@@ -11,17 +11,22 @@ const redis = require('./config/redisConfig');
 const swagger = require('./utils/swagger');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const {receiveSubscribe} = require("./judge/judge");
+const docker = require('./config/docker');
 
 // 初始化数据库
-db.initializeDatabase();
-redis.initRedis();
-redis.subscribeToChannel('judge', (channel, message) => {
-	console.log(`接收到频道 ${channel} 的消息：${message}`);
-})
+async function init() {
+	await db.initializeDatabase();
+	await redis.initRedis();
+	await docker.connectDocker();
+}
+
+// redis.subscribeToChannel('judge', (channel, message) => {
+// 	console.log(`接收到频道 ${channel} 的消息：${message}`);
+// 	receiveSubscribe(message);
+// })
 
 
-// 初始化Swagger
-swagger(app);
 app.use(cors({
 	// exposeHeaders: ['X-Auth-Token'],
 	origin: 'http://localhost:3468',
@@ -46,6 +51,11 @@ app.use('/uploads', express.static('src/uploads'));
 app.use(router);
 
 
-app.listen(port, () => {
-	console.log(`Server is running at http://localhost:${port}`);
-});
+init().then(() => {
+	app.listen(port, () => {
+		console.log(`Server is running at http://localhost:${port}`);
+	});
+}).catch((err) => {
+	console.error('Server start failed:', err);
+	process.exit(1);
+})

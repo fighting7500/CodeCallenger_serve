@@ -53,7 +53,7 @@ const redis = {
 			messageHandler(channel, msg);
 		}).then(async () => {
 			console.log('订阅成功');
-		}).catch((error) => {
+		}).catch(async (error) => {
 			console.error('订阅失败：', error);
 		});
 		// 返回subscriber客户端实例以便后续操作，如取消订阅等

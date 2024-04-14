@@ -23,6 +23,15 @@ const saveCodeToDatabase = async (userId, problemId, code, language) => {
 	return result.insertId;
 };
 
+// 通过id查询提交记录
+const getSubmissionById = async (id) => {
+	const db = getDatabase();
+	const sql = 'SELECT * FROM submissions WHERE id = ?';
+	const [result] = await db.query(sql, [id]);
+	return result[0];
+};
+
 module.exports = {
 	saveCodeToDatabase,
+	getSubmissionById
 }
