@@ -15,6 +15,10 @@ const path = require('path');
 // 初始化数据库
 db.initializeDatabase();
 redis.initRedis();
+redis.subscribeToChannel('judge', (channel, message) => {
+	console.log(`接收到频道 ${channel} 的消息：${message}`);
+})
+
 
 // 初始化Swagger
 swagger(app);
