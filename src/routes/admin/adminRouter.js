@@ -8,7 +8,7 @@
 
 const router = require('express').Router();
 const middleware = require('../../utils/checkToken');
-const userController = require('../../controllers/admin/userController');
+const userController = require('../../controllers/admin/adminController');
 
 
 // 获取用户列表
@@ -25,6 +25,8 @@ router.put('/UpdateProblemStatus', middleware, userController.updateProblemStatu
 router.delete('/DeleteProblem', middleware, userController.deleteProblem);
 // 新增题目
 router.post('/AddProblem', middleware, userController.addProblem);
+// 审核文章
+router.put('/UpdateArticleStatus', middleware, userController.updateArticleStatus);
 
 
 module.exports = router;

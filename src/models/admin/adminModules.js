@@ -1,7 +1,7 @@
 /**
  * @Author: 17197
  * @Date: 2024/4/4
- * @Description: userModules.js
+ * @Description: adminModules.js
  * @Version: 1.0
  * @Last Modified time : 2024/4/4
  **/
@@ -138,12 +138,25 @@ const addProblem = async (Form, SampleInputs, SampleOutputs, SampleRemarks, Test
 			Form.source = rows2.insertId;
 		}
 		// 插入problems表
-		const sql = `INSERT INTO problems (name, category_id, difficulty, source_id, author) VALUES (?, ?, ?, ?, ?)`;
-		const [rows] = await connection.execute(sql, [Form.name, Form.category, Form.difficulty, Form.source, Form.author]);
+		const sql = `INSERT INTO problems (name, category_id, difficulty, source_id, memory, cpu_time author) VALUES (?, ?, ?, ?, ?)`;
+		const [rows] = await connection.execute(sql, [Form.name, Form.category, Form.difficulty, Form.source, Form.memory, Form.cpuTime, Form.author]);
 		// 插入problem_details表
 		const sql2 = `INSERT INTO problem_details (problem_id, content, sample_input, sample_output, sample_remark, input,expected_output) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 		const [rows2] = await connection.execute(sql2, [rows.insertId, Form.content, SampleInputs, SampleOutputs, SampleRemarks, TestInputs, TestExpectedOutputs]);
 		return rows2;
+	} catch (error) {
+		console.error(error);
+		return error;
+	}
+}
+
+// 审核文章
+const updateArticleStatus = async (id, status) => {
+	try {
+		const sql = `UPDATE articles SET status = ? WHERE id = ?`;
+		const connection = getDatabase();
+		const [rows] = await connection.execute(sql, [status, id]);
+		return rows;
 	} catch (error) {
 		console.error(error);
 		return error;
@@ -157,5 +170,6 @@ module.exports = {
 	updateUser,
 	updateProblemStatus,
 	deleteProblem,
-	addProblem
+	addProblem,
+	updateArticleStatus
 }

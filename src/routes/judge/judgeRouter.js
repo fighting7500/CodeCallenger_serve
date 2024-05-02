@@ -10,7 +10,7 @@ const router = require('express').Router();
 const middleware = require('../../utils/checkToken');
 const judgeController = require('../../controllers/judge/judgeController');
 
-// 运行代码
+// 运行代码-提交并运行
 router.post('/run', judgeController.runCode);
 
 

@@ -17,7 +17,7 @@ exports.checkUser = async (req, res) => {
 		const user = await userModel.query(data.type, data.value);	// type: 1-用户名, 2-手机号, 3-邮箱
 		if (user) {
 			console.log('已存在');
-			return res.sendRes(null, 200, `该${data.type == 1 ? '用户名' : data.type == 2 ? '手机号' : '邮箱'}已被注册`);
+			return res.sendRes(null, 200, `该${data.type === 1 ? '用户名' : data.type === 2 ? '手机号' : '邮箱'}已被注册`);
 		}
 		console.log('不存在');
 		res.sendRes(null, 400, 'success');
@@ -38,7 +38,7 @@ exports.register = async (req, res) => {
 			return res.sendRes(null, 400, '验证码错误');
 		}
 		// 创建新用户
-		data.password = await bcryptUtils.hashPassword(data.Password);
+		data.Password = await bcryptUtils.hashPassword(data.Password);
 		const result = await userModel.createUser(data);
 		if (result) {
 			throw new Error(result);
@@ -110,7 +110,7 @@ exports.login = async (req, res) => {
 				return res.sendRes(null, 400, '验证码错误');
 			}
 			// 查询用户
-			user = await userModel.query(2, data.UserMobile);
+			user = await userModel.query('2', data.UserMobile);
 			if (!user) {
 				console.log('用户不存在');
 				return res.sendRes(null, 400, '用户不存在');
@@ -119,11 +119,11 @@ exports.login = async (req, res) => {
 			// 判断是哪种登录方式
 			// 通过正则判断account是手机号，邮箱还是用户名
 			if (/^1[3456789]\d{9}$/.test(data.Account)) {
-				user = await userModel.query(2, data.Account);
+				user = await userModel.query('2', data.Account);
 			} else if (/^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/.test(data.Account)) {
-				user = await userModel.query(3, data.Account);
+				user = await userModel.query('3', data.Account);
 			} else {
-				user = await userModel.query(1, data.Account);
+				user = await userModel.query('1', data.Account);
 			}
 			if (!user) {
 				console.log('用户不存在');
@@ -139,7 +139,7 @@ exports.login = async (req, res) => {
 		const recordInfo = await checkLoginRecord(user.id);
 		const {password, ...userInfo} = user;
 		// avatar拼接上服务器地址
-		userInfo.avatar = 'http://localhost:7500' + userInfo.avatar;
+		userInfo.avatar = process.env.BASE_URL + userInfo.avatar;
 		const accessToken = generateToken(userInfo);
 		setCookie(res, 'access_token', accessToken, false)
 		const refreshToken = generateToken(userInfo, "7d");
@@ -164,7 +164,7 @@ exports.getUserInfo = async (req, res) => {
 			return res.sendRes(null, 400, '');
 		}
 		// 通过id查询用户信息
-		const result = await userModel.query(4, id);
+		const result = await userModel.query('4', id);
 		// 获取用户积分
 		if (!result) {
 			console.log('用户不存在');
@@ -174,7 +174,7 @@ exports.getUserInfo = async (req, res) => {
 		result.points = await pointsModule.getPoints(id);
 		console.log('获取用户信息成功');
 		const {password, ...data} = result;
-		data.avatar = 'http://localhost:7500' + data.avatar;
+		data.avatar = process.env.BASE_URL + data.avatar;
 		res.sendRes({...data, recordInfo}, 200, 'success');
 	} catch (error) {
 		console.log(error);
@@ -231,7 +231,7 @@ exports.resetPassword = async (req, res) => {
 	try {
 		const data = req.body;
 		// 查询手机号是否存在
-		const user = await userModel.query(2, data.UserMobile);
+		const user = await userModel.query('2', data.UserMobile);
 		if (!user) {
 			console.log('用户不存在');
 			return res.sendRes(null, 400, '用户不存在');
@@ -244,7 +244,7 @@ exports.resetPassword = async (req, res) => {
 		}
 		// 重置密码
 		const password = await bcryptUtils.hashPassword(data.Password);
-		const result = await userModel.resetPassword(data.id, password);
+		const result = await userModel.resetPassword(user.id, password);
 		if (result) {
 			throw new Error(result);
 		}
@@ -265,10 +265,9 @@ function generateToken(data, time = '1h') {
 // 设置cookie
 function setCookie(res, name, token, httpOnly = true, maxAge = 24 * 60 * 60 * 1000) {
 	res.cookie(name, token, {
-		domain: 'localhost',
 		httpOnly: httpOnly,
 		maxAge: maxAge,
-		signed: true
+		signed: true, // 签名cookie, 防止篡改
 	})
 }
 

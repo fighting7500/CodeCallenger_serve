@@ -43,6 +43,8 @@ exports.getCategories = async (req, res) => {
 exports.getProblemList = async (req, res) => {
 	try {
 		// 题目名称、题目分类、题目难度
+		const clientIP = req.headers['x-forwarded-for'] || req.ip;
+		console.error(clientIP)
 		const {Page, Limit, CategoryId, Difficulty, ProblemName, ID, SourceId, UserID, Status} = req.query;
 		let result = {};
 		if (UserID && Status) {

@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors');
 const db = require('./config/db');
 const port = process.env.PORT || 7500;
+const host = process.env.HOST || 'localhost';
 const {sendRes} = require('./utils/resextra');
 const router = require('./routes');
 // 导入redis连接
@@ -13,6 +14,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const {receiveSubscribe} = require("./judge/judge");
 const docker = require('./config/docker');
+const {getIPLocation} = require('./utils/getIPLocation');
 
 // 初始化数据库
 async function init() {
@@ -29,7 +31,8 @@ async function init() {
 
 app.use(cors({
 	// exposeHeaders: ['X-Auth-Token'],
-	origin: 'http://localhost:3468',
+	// origin: 'http://192.168.237.195:3468',
+	origin: 'http://localhost:3468', // 允许跨域的地址，全部：*
 	credentials: true
 }));
 
@@ -50,10 +53,9 @@ app.use('/uploads', express.static('src/uploads'));
 
 app.use(router);
 
-
 init().then(() => {
-	app.listen(port, () => {
-		console.log(`Server is running at http://localhost:${port}`);
+	app.listen(port, host, () => {
+		console.log(`Server is running at http://${host}:${port}`);
 	});
 }).catch((err) => {
 	console.error('Server start failed:', err);

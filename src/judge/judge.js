@@ -6,7 +6,7 @@
  * @Last Modified time : 2024/4/14
  **/
 const questionModules = require('../models/questionModules');
-const ExampleCodeSandbox = require('../judge/impl/ExampleCodeSandbox').default;
+const ExampleCodeSandbox = require('../judge/impl/exampleCodeSandbox').default;
 
 // 接收judge的订阅信息
 const receiveSubscribe = async (strData) => {

@@ -1,11 +1,11 @@
 /**
  * @Author: 17197
  * @Date: 2024/4/4
- * @Description: userController.js
+ * @Description: adminController.js
  * @Version: 1.0
  * @Last Modified time : 2024/4/4
  **/
-const userAdminModel = require('../../models/admin/userModules');
+const userAdminModel = require('../../models/admin/adminModules');
 const userModel = require('../../models/userModel');
 const bcryptUtils = require('../../utils/bcryptUtils');
 
@@ -17,7 +17,7 @@ exports.getUserList = async (req, res) => {
 		const result = await userAdminModel.queryUserList(page, limit, id, phone, role);
 		result.Rows.forEach(item => {
 			delete item.password;
-			item.avatar = 'http://localhost:7500' + item.avatar;
+			item.avatar = process.env.BASE_URL + item.avatar;
 		})
 		res.sendRes(result, 200, 'success');
 	} catch (error) {
@@ -144,6 +144,23 @@ exports.addProblem = async (req, res) => {
 			res.sendRes(null, 200, 'success');
 		} else {
 			res.sendRes(null, 400, '新增题目失败');
+		}
+	} catch (error) {
+		console.error(error);
+		res.sendRes(null, 500, '服务器错误');
+	}
+}
+
+// 审核文章
+exports.updateArticleStatus = async (req, res) => {
+	try {
+		const {id, status} = req.query;
+		const result = await userAdminModel.updateArticleStatus(id, status);
+		if (result.affectedRows) {
+			console.log('审核文章成功');
+			res.sendRes(null, 200, 'success');
+		} else {
+			res.sendRes(null, 400, '审核文章失败');
 		}
 	} catch (error) {
 		console.error(error);

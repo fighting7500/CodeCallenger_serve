@@ -7,16 +7,16 @@ const query = async (type, data) => {
 	console.log('查询用户信息:', type, data);
 	let field = '';
 	switch (type) {
-		case 1:
+		case '1':
 			field = 'username';
 			break;
-		case 2:
+		case '2':
 			field = 'phone';
 			break;
-		case 3:
+		case '3':
 			field = 'email';
 			break;
-		case 4:
+		case '4':
 			field = 'id';
 			break;
 	}
